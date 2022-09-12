@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.omgxy.technote.core.mapper.BookMapper">
+
+    <resultMap id="baseResultMap" type="com.omgxy.technote.core.entity.Book" autoMapping="true">
+        <id column="id" javaType="java.lang.String" jdbcType="VARCHAR" property="id" />
+        <collection
+                property="categoryList"
+                select="com.omgxy.technote.core.mapper.BookCategoryMapper.getByBookId"
+                ofType="com.omgxy.technote.core.entity.Category" column="id" />
+    </resultMap>
+
+    <insert id="add">
+        INSERT INTO `t_book`
+        (
+            `id`,
+            `name`,
+            `description`,
+            `cover_image`,
+            `created_at`,
+            `updated_at`,
+            `sort`
+        )
+        VALUES
+        (
+            #{id},
+            #{name},
+            #{description},
+            #{coverImage},
+            #{createdAt},
+            #{updatedAt},
+            #{sort}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE `t_book`
+        SET
+            `name` = #{name},
+            `description` = #{description},
+            `cover_image` = #{coverImage},
+            `updated_at` = #{updatedAt},
+            `sort` = #{sort}
+        WHERE `id` = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM `t_book`
+        WHERE `id` = #{id}
+    </delete>
+
+    <select id="get" resultMap="baseResultMap">
+        SELECT
+            `id`,
+            `name`,
+            `description`,
+            `cover_image`,
+            `created_at`,
+            `updated_at`,
+            `sort`
+        FROM `t_book`
+        WHERE `id` = #{id}
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT
+            COUNT(1)
+        FROM `t_book`
+        WHERE 1 = 1
+        <if test="categoryId != null">
+            AND `id` IN (SELECT `book_id` FROM `t_book_category` WHERE `category_id` = #{categoryId})
+        </if>
+    </select>
+
+    <select id="list" resultMap="baseResultMap">
+        SELECT
+            `id`,
+            `name`,
+            `description`,
+            `cover_image`,
+            `created_at`,
+            `updated_at`,
+            `sort`
+        FROM `t_book`
+        WHERE 1 = 1
+        <if test="categoryId != null">
+            AND `id` IN (SELECT `book_id` FROM `t_book_category` WHERE `category_id` = #{categoryId})
+        </if>
+        ORDER BY `name`
+        <if test="start != null and pageSize != null">
+            limit #{start}, #{pageSize}
+        </if>
+    </select>
+</mapper>

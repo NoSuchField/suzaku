@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.omgxy.technote.core.mapper.BookCategoryMapper">
+    <insert id="addBatch">
+        INSERT INTO `t_book_category` (`book_id`, `category_id`)
+        VALUES
+        <foreach collection="categoryIdList" item="item" separator=",">
+            (#{bookId}, #{item})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByBookId">
+        DELETE FROM `t_book_category` WHERE `book_id` = #{bookId}
+    </delete>
+
+    <delete id="deleteByCategoryId">
+        DELETE FROM `t_book_category` WHERE `category_id` = #{categoryId}
+    </delete>
+
+    <select id="getByBookId" resultType="com.omgxy.technote.core.entity.Category">
+        SELECT
+            `t2`.`id`,
+            `t2`.`name`,
+            `t2`.`icon`,
+            `t2`.`created_at`,
+            `t2`.`updated_at`,
+            `t2`.`sort`
+        FROM `t_book_category` `t1`
+        JOIN `t_category` `t2` ON `t1`.`category_id` = `t2`.`id`
+        WHERE `t1`.`book_id` = #{bookId}
+    </select>
+</mapper>
