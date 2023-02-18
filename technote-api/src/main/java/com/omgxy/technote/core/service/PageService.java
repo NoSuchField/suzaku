@@ -25,7 +25,7 @@ public class PageService {
     @Transactional(rollbackFor = Exception.class)
     public String addPage(Page page) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        page.setId(UUID.randomUUID().toString());
+        page.setId(uuid);
         Timestamp now = DateUtil.now();
         page.setCreatedAt(now);
         page.setUpdatedAt(now);
@@ -78,5 +78,48 @@ public class PageService {
             page.setChildren(new ArrayList<>());
         }
         return new TreeListUtil<Page>().convertListToTree(list);
+    }
+
+    public Boolean movePageUp(String pageId) {
+
+        Page page = pageMapper.get(pageId);
+
+        Long currentSort = page.getSort();
+
+        String parentId = page.getParentId();
+
+        Page upPage = pageMapper.getUpNode(parentId, currentSort);
+
+        if (page != null && upPage != null) {
+            page.setSort(upPage.getSort());
+            upPage.setSort(currentSort);
+
+            pageMapper.update(page);
+            pageMapper.update(upPage);
+        }
+
+        return true;
+    }
+
+    public Boolean movePageDown(String pageId) {
+
+        Page page = pageMapper.get(pageId);
+
+        Long currentSort = page.getSort();
+
+        String parentId = page.getParentId();
+
+        Page downPage = pageMapper.getDownNode(parentId, currentSort);
+
+        if (page != null && downPage != null) {
+            page.setSort(downPage.getSort());
+            downPage.setSort(currentSort);
+
+            pageMapper.update(page);
+            pageMapper.update(downPage);
+        }
+
+        return true;
+
     }
 }

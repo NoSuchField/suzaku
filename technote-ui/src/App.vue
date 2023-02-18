@@ -93,7 +93,7 @@ export default {
             </el-icon>
           </div>
 
-          <el-menu :default-active="subActive" background-color="#FFFFFF" text-color="#000000" @select="handleSubSelect"
+          <el-menu :default-active="subActive" background-color="#252526" text-color="#000000" @select="handleSubSelect"
             @open="handleOpen" @close="handleClose">
             <el-menu-item v-for="item in subMenuList" :key="item.id" :index="item.index">
               <el-icon>

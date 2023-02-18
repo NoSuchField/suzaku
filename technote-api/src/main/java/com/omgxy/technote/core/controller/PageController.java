@@ -27,7 +27,7 @@ public class PageController {
         return new Response<>(ResultEnum.OK);
     }
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public Response<String> deletePage(@RequestParam("id") String id) {
         pageService.deletePage(id);
         return new Response<>(ResultEnum.OK);
@@ -41,6 +41,18 @@ public class PageController {
     @GetMapping("/list")
     public Response<List<Page>> listPage(@RequestParam(value = "bookId", required = false) String bookId) {
         return new Response<>(ResultEnum.OK, pageService.listPage(bookId));
+    }
+
+    @PostMapping("/move/up")
+    public Response<String> movePageUp(@RequestParam(value = "pageId", required = true) String pageId) {
+        pageService.movePageUp(pageId);
+        return new Response<>(ResultEnum.OK);
+    }
+
+    @PostMapping("/move/down")
+    public Response<String> movePageDown(@RequestParam(value = "pageId", required = true) String pageId) {
+        pageService.movePageDown(pageId);
+        return new Response<>(ResultEnum.OK);
     }
 
 }

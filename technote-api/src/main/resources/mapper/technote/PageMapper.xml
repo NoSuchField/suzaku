@@ -76,5 +76,45 @@
         <if test="bookId != null">
             AND `book_id` = #{bookId}
         </if>
+        ORDER BY `sort`
     </select>
+
+    <select id="getUpNode" resultMap="baseResultMap">
+        SELECT
+            `id`,
+            `book_id`,
+            `parent_id`,
+            `label`,
+            `content`,
+            `created_at`,
+            `updated_at`,
+            `sort`
+        FROM `t_page`
+        WHERE `parent_id` = #{parentId}
+        AND `sort` <![CDATA[ < ]]> #{currentSort}
+        ORDER BY `sort` DESC LIMIT 1
+    </select>
+
+    <select id="getDownNode" resultMap="baseResultMap">
+        SELECT
+            `id`,
+            `book_id`,
+            `parent_id`,
+            `label`,
+            `content`,
+            `created_at`,
+            `updated_at`,
+            `sort`
+        FROM `t_page`
+        WHERE `parent_id` = #{parentId}
+          AND `sort` <![CDATA[ > ]]> #{currentSort}
+        ORDER BY `sort` LIMIT 1
+    </select>
+
+    <delete id="purge">
+        DELETE FROM `t_page` WHERE `id` IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

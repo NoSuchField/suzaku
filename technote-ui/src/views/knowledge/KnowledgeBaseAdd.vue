@@ -35,8 +35,6 @@
           :value="item.id"
         >
           <span>{{ item.name }}</span>
-          
-          
         </el-option>
       </el-select>
     </el-form-item>
@@ -44,10 +42,7 @@
     
     <el-form-item>
       <el-button type="primary" @click="onSubmit">Create</el-button>
-      <router-link to='/knowledge'>
-          <el-button>Cancel</el-button>
-      </router-link>
-      
+      <el-button @click="onCancel">Cancel</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -78,7 +73,7 @@ let form = ref({
     const onSubmit = () => {
     api.post("/book/" + (id ? "update" : "add"), form.value).then(response => {
         if (response.data.code === "200") {
-          router.push("/knowledge")
+          router.replace("/")
         }
       });
     }
@@ -109,6 +104,10 @@ api.post('/category/list', {}).then(response => {
 
 const tokenData = {
     token: '88769b4b0be6016d1f12045a2ca85e5a'
+}
+
+const onCancel = () => {
+  router.replace("/")
 }
 
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
@@ -158,5 +157,9 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   width: 178px;
   height: 178px;
   text-align: center;
+}
+
+.el-main {
+  
 }
 </style>

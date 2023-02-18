@@ -16,7 +16,7 @@ let myTheme = EditorView.theme({
     // 输入的字体颜色
     "&": {
         color: "#0052D9",
-        backgroundColor: "#FFFFFF"
+        backgroundColor: "#252526"
     },
     ".cm-content": {
         caretColor: "#0052D9",
@@ -36,11 +36,11 @@ let myTheme = EditorView.theme({
     // 选中的状态
     "&.cm-focused .cm-selectionBackground, ::selection": {
         backgroundColor: "#0052D9",
-        color:'#FFFFFF'
+        color:'#252526'
     },
     // 左侧侧边栏的颜色
     ".cm-gutters": {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#252526",
         color: "#ddd", //侧边栏文字颜色
         border: "none"
     }

@@ -2,22 +2,28 @@
 
     <div class="common-layout" style="height: calc(100%)">
         <el-container>
-            <el-aside width="300px">
-
-
-
+            <el-aside width="480px">
                 <el-tree allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef" :data="data"
                     draggable default-expand-all node-key="id" :expand-on-click-node=false
                     @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter"
+                    :current-node-key="currentNodeId"
                     @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd"
                     @node-drop="handleDrop" @node-click="handleNodeClick">
                     <template #default="{ node, data }">
                         <span class="custom-tree-node">
-                            <span>{{ node.label }}</span>
+                            <span>{{ node.label }} </span>
                             <span>
 
-                                <a id="btnDel" style="margin-left: 8px">
-                                    <el-icon>
+                                <a id="btnDel" >
+                                    
+                                    <el-icon @click="movePage('up', data.id)">
+                                        <Top />
+                                    </el-icon>
+
+                                    <el-icon @click="movePage('down', data.id)">
+                                        <Bottom />
+                                    </el-icon>
+                                    <el-icon  @click="delPage.value = data;centerDialogVisible=true">
                                         <Delete />
                                     </el-icon>
                                 </a>
@@ -43,15 +49,15 @@
                 <el-header class="navBar">
 
                     <el-row class="mb-4">
-                        <el-button type="primary" style="margin-left: 16px;" @click="viewIndex(true)">
-                            查看目录
+                        <el-button style="margin-left: 16px;" @click="viewIndex(true)">
+                            返回
                         </el-button>
 
-                        <el-button type="primary" style="margin-left: 16px" @click="savePage">
+                        <el-button v-if="editMode" style="margin-left: 16px" @click="savePage">
                             保存
                         </el-button>
 
-                        <el-button type="primary" style="margin-left: 16px" @click="toggleMode">
+                        <el-button style="margin-left: 16px" @click="toggleMode" v-if="currentNodeId != 0">
                             {{ editMode == true ? "预览" : "编辑" }}
                         </el-button>
                     </el-row>
@@ -59,20 +65,23 @@
 
                     <el-breadcrumb :separator-icon="ArrowRight">
                         <el-breadcrumb-item v-for="item in pathList" @click="pageClicked(item)"
-                            :class="item.id == currentNode.id ? 'currentBread' : ''">{{ item.label }}
+                            :class="item.id == currentNodeId ? 'currentBread' : ''">{{ item.label }}
                         </el-breadcrumb-item>
                     </el-breadcrumb>
 
                 </el-header>
                 <el-main>
-
-
-
-
+                    <div class="mt-4" v-if="editMode" style="margin-bottom: 20px">
+                        <el-input v-model="pageDetail.label" placeholder="Please input" class="input-with-select">
+                            <template #append>
+                                <el-button :icon="Check" type="success" @click="savePage" />
+                            </template>
+                        </el-input>
+                    </div>
 
                     <MarkdownEditor v-if="editMode" v-model="pageDetail.content" />
 
-                    <div v-if="!editMode" class="markdown-body">
+                    <div v-if="!editMode && pageDetail.content && !showIndex" class="markdown-body">
                         <Markdown :source="pageDetail.content || ''" />
                     </div>
 
@@ -86,8 +95,7 @@
                             <span class="custom-tree-node">
                                 <span>{{ node.label }}</span>
                                 <span>
-
-                                    <a id="btnDel" style="margin-left: 8px">
+                                    <a id="btnDel" style="margin-left: 8px" @click="delPage.value = data;centerDialogVisible=true">
                                         <el-icon>
                                             <Delete />
                                         </el-icon>
@@ -97,39 +105,33 @@
                         </template>
 
                     </el-tree>
-
-
-
-                    <el-drawer v-model="drawer2" :direction="direction" style="top: 50px">
-                        <template #title>
-                            <h3>目录</h3>
-                        </template>
-
-
-                        <template #default>
-
-
-
-                        </template>
+                    
+                    <el-dialog
+                        v-model="centerDialogVisible"
+                        title="Warning"
+                        width="30%"
+                        align-center
+                    >
+                        <span>确定删除页面吗 ?</span>
                         <template #footer>
-                            <div style="flex: auto">
-                                <el-button @click="cancelClick">cancel</el-button>
-                                <el-button type="primary" @click="confirmClick">confirm</el-button>
-                            </div>
+                        <span class="dialog-footer">
+                            <el-button @click="centerDialogVisible = false">Cancel</el-button>
+                            <el-button type="primary" @click="deletePage(delPage.value.id)">
+                            Confirm
+                            </el-button>
+                        </span>
                         </template>
-                    </el-drawer>
+                    </el-dialog>
 
                 </el-main>
             </el-container>
         </el-container>
     </div>
-
-
 </template>
 
 <script lang="ts" setup>
 import api from '../../api'
-import { ref, reactive } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 import { ElMessageBox } from 'element-plus'
 
 import { Check, ArrowRight } from '@element-plus/icons-vue'
@@ -150,7 +152,23 @@ import MarkdownEditor from '../../components/MarkdownEditor.vue'
 
 const router = useRouter()
 
-let id = router.currentRoute.value.query.id
+let query = {}
+
+if (localStorage.getItem('query')) {
+    query = JSON.parse(localStorage.getItem('query'))
+} else {
+    query = router.currentRoute.value.query
+}
+
+if (router.currentRoute.value.query.id) {
+    query = router.currentRoute.value.query
+    localStorage.setItem('query', JSON.stringify(router.currentRoute.value.query))
+} else {
+    router.push({'path': '/knowledgeDetail', 'replace': true, 'query': query});
+}
+
+
+let id = query.id
 
 interface KbMetaData {
     id: string,
@@ -164,15 +182,18 @@ interface TreeNode {
     label: string
 }
 
+let centerDialogVisible = ref(false)
+
 let pathList = ref<TreeNode[]>([{ 'id': '0', 'label': 'root' }])
 
 let kbMetaData = ref<KbMetaData>()
+
+let bookUrl = location.href.split('&')[0]
 
 api.get('/book/detail?id=' + id).then(response => {
     if (response.data.code === "200") {
         kbMetaData.value = response.data.data
         viewIndex(false)
-
     }
 });
 
@@ -192,12 +213,15 @@ const cmChange = () => {
 
 }
 
+const delPage = ref({})
+
 let currentNode = ref({ 'id': '0', 'label': 'root' })
 
 const pageClicked = (node) => {
     let nodeId = node.id
-
-    refreshPage(nodeId)
+    console.log(nodeId)
+    // router.currentRoute.value.query.id = nodeId
+    
 
     currentNode.value = node
 
@@ -215,20 +239,35 @@ const pageClicked = (node) => {
             pathList.value = newPathList
 
         }
-
     })
+
+    localStorage.setItem('path', JSON.stringify(pathList.value))
+
+    refreshPage(nodeId)
 
 }
 
+
 const addPage = () => {
     let data = {
-        knowledgeBaseId: id,
-        parentId: currentNode.value.id,
+        bookId: id,
+        parentId: currentNodeId.value,
         label: newPageName.value
     }
     api.post('/page/add', data).then(response => {
         if (response.data.code === "200") {
+            let query = JSON.parse(localStorage.getItem('query'))
+            query.pageId = response.data.data
+    router.replace({'path': '/knowledgeDetail', 'replace': false, 'query': query});
+    localStorage.setItem('query', JSON.stringify(query))
 
+    if (id != 0) {
+        let newPathList = JSON.parse(localStorage.getItem('path'))
+        newPathList.push({'id': response.data.data, 'label': newPageName.value})
+        localStorage.setItem('path', JSON.stringify(newPathList))
+    }
+
+    nextTick(() => {router.go(0)})
         }
     });
 }
@@ -250,15 +289,79 @@ const pageDetail = ref<PageDetail>({
     content: ''
 })
 
-const refreshPage = (nodeId) => {
-    api.get('/page/detail?id=' + nodeId).then(response => {
-        if (response.data.code === "200") {
-            pageDetail.value = response.data.data
-        }
-    });
+const treeRef = ref<InstanceType<typeof ElTree>>()
 
+const setCheckedNodes = (node) => {
+
+    let id = node.id === "0" ? null : node.id
+    if (treeRef.value!) {
+        treeRef.value!.setCurrentKey(
+        id,
+        true
+    )
+    }
 }
 
+const deletePage = (pageId) => {
+    api.post('/page/delete?id=' + pageId).then(response => {
+        if (response.data.code === "200") {
+            localStorage.removeItem('query')
+            delPage.value = {}
+            centerDialogVisible.value = false
+            
+            pathList.value = [{ 'id': '0', 'label': 'root' }]
+            localStorage.setItem('path', JSON.stringify(pathList.value))
+
+            localStorage.setItem('query', JSON.stringify({'id': id}))
+            
+            router.push({'path': '/knowledgeDetail', 'replace': true, 'query': {'id':id}});
+
+            nextTick(() => {
+                
+                api.get('/book/detail?id=' + id).then(response => {
+                    if (response.data.code === "200") {
+                        kbMetaData.value = response.data.data
+                        viewIndex(false)
+                        showIndex.value = true
+                        
+                        currentNodeId.value = 0
+
+                        
+                    }
+                });
+            })
+        }
+    });
+}
+
+let currentNodeId = ref(0)
+
+const refreshPage = (nodeId) => {
+
+    if (nodeId == 0) {
+        showIndex.value = true
+        currentNodeId.value = nodeId
+    } else {
+        showIndex.value = false
+        currentNodeId.value = nodeId
+        api.get('/page/detail?id=' + nodeId).then(response => {
+            if (response.data.code === "200") {
+                pageDetail.value = response.data.data
+            }
+        });
+    }
+    const newUrl = nodeId == 0 ? bookUrl : `${bookUrl}&pageId=${nodeId}`
+    // window.history.replaceState('', '', newUrl)
+    let query = {'id': id, 'pageId': nodeId}
+    localStorage.setItem('query', JSON.stringify(query))
+    router.push({'path': '/knowledgeDetail', 'replace': true, 'query': query});
+
+    let flag = false
+    pathList.value = JSON.parse(localStorage.getItem('path'))
+
+console.log(treeRef.value)
+    
+}
 let editMode = ref(false)
 
 const toggleMode = () => {
@@ -306,20 +409,8 @@ const handleNodeClick = (
     refreshPage(node.id)
     currentNode.value = { 'id': node.id, 'label': node.label }
     pathList.value = [{ id: '0', label: 'root' }].concat(node.path)
-
+    localStorage.setItem('path', JSON.stringify(pathList.value))
 }
-
-const treeRef = ref<InstanceType<typeof ElTree>>()
-
-const setCheckedNodes = (node) => {
-
-    let id = node.id === "0" ? null : node.id
-    treeRef.value!.setCurrentKey(
-        id,
-        true
-    )
-}
-
 
 const allowDrop = (draggingNode: Node, dropNode: Node, type: NodeDropType) => {
     if (dropNode.data.label === 'Level two 3-1') {
@@ -340,11 +431,18 @@ let data = ref<Node[]>()
 
 const viewIndex = (draw) => {
     if (draw == true) {
-        drawer2.value = true
+        router.replace("/")
     }
-    api.get('/page/list?knowledgeBaseId=' + kbMetaData.value?.id).then(response => {
+    api.get('/page/list?bookId=' + kbMetaData.value?.id).then(response => {
         if (response.data.code === "200") {
             data.value = response.data.data
+
+            if (treeRef.value!) {
+        treeRef.value!.setCurrentKey(
+        currentNodeId,
+        true
+    )
+    }
         }
     });
 }
@@ -352,6 +450,7 @@ const viewIndex = (draw) => {
 const savePage = () => {
     api.post('/page/update', pageDetail.value).then(response => {
         if (response.data.code === "200") {
+            router.go(0)
         }
     });
 }
@@ -374,13 +473,26 @@ function confirmClick() {
     drawer2.value = false
 }
 
+if (query.pageId) {
+    console.log('boooooooooooooooooo', query.pageId)
+    refreshPage(query.pageId)
+}
 
+
+const movePage = (direction, pageId) => {
+    console.log(direction)
+
+    api.post('/page/move/' + direction + "?pageId=" + pageId).then(response => {
+        if (response.data.code === "200") {
+            router.go(0)
+        }
+    });
+}
 
 </script>
 
 <style>
 .el-drawer__body {
-
     padding: 20px !important;
 }
 
@@ -388,11 +500,10 @@ function confirmClick() {
     height: 40px !important;
     line-height: 40px !important;
     border-radius: 10px;
-
 }
 
 .el-tree {
-
+    background: #242424 !important;
     font-size: 18px;
 }
 
@@ -415,20 +526,29 @@ function confirmClick() {
     color: green;
 }
 
-#btnAdd:hover {
-    color: green;
+#btnDel {
+    color: #242424;
+    font-size: 22px;
+    width: 0
 }
 
 #btnDel:hover {
-    color: red;
+    color: #D3D3D3;
+    width: auto
+}
+
+#btnDel > .el-icon {
+    font-size: 16px;
+}
+
+#btnDel > .el-icon :hover {
+    color: #808080;
+    background-color: #333333; 
+    border-radius: 3px
 }
 
 #btnAdd {
-    color: yellowgreen;
-}
-
-#btnDel {
-    color: rebeccapurple;
+    color: #2B6298;
 }
 
 #btnAddPage {
@@ -441,7 +561,8 @@ function confirmClick() {
 
 .el-breadcrumb {
     margin: 20px auto;
-    background-color: #DCDFE6;
+    background-color: #252526;
+    border: 1px solid #252525;
     line-height: 40px;
     height: 40px;
     padding: auto 20px;
@@ -459,18 +580,17 @@ function confirmClick() {
 
 .el-breadcrumb__inner:hover {
     color: #EFEFEF !important;
-    background-color: #CCCCCC;
+    background-color: #1E1E1E;
     cursor: pointer !important;
 }
 
 .el-breadcrumb__item:first-child {
-
     line-height: 40px;
 }
 
 .currentBread {
     color: #EFEFEF !important;
-    background-color: #CCCCCC;
+    background-color: #1E1E1E;
 }
 
 .markdown-body {
@@ -480,11 +600,11 @@ function confirmClick() {
 
 .navBar {
     height: 140px !important;
-    background-color: #FFFFFF;
+    background-color: #292A2D;
     padding: 20px;
     z-index: 999;
     margin: 20px;
-    margin-right: 35px;
+    margin-top: 30px;
     border-radius: 5px;
     padding-bottom: 0 !important;
 }
@@ -492,5 +612,42 @@ function confirmClick() {
 .el-main {
     flex-basis: 0 !important;
     padding-top: 0 !important;
+}
+
+.cm-editor, .cm-gutters {
+    background-color: #1E1E1E !important;
+}
+.cm-line {
+    border-top: 2px solid transparent !important;
+    border-bottom: 2px solid transparent !important;
+    color: #D4D4D4;
+}
+
+.cm-activeLine, .cm-activeLineGutter {
+    background-color: #1E1E1E !important;
+    border-top: 2px solid #282828 !important;
+    border-bottom: 2px solid #282828 !important;
+}
+
+.ͼc {
+    color: #D0B984;
+}
+
+.el-aside {
+    padding: 10px;
+    margin-right: 0;
+}
+
+.cm-gutterElement {
+    display: none !important;
+}
+
+.cm-content {
+    margin: 15px !important;
+}
+
+.markdown-body {
+    --color-canvas-default: #202124 !important;
+    border: 1px solid #404040 !important;
 }
 </style>

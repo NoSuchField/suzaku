@@ -5,7 +5,7 @@ import { ElMessageBox } from 'element-plus';
 
 const config = {
   // baseURL: process.env.baseURL
-  baseURL: '/api',
+  baseURL: 'http://127.0.0.1:8090/api',
   timeout: 1000,
   headers: {
     'Content-Type': 'application/json'

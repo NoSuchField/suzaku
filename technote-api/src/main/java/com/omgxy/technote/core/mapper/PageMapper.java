@@ -18,4 +18,10 @@ public interface PageMapper {
 
     List<Page> list(@Param("bookId") String bookId);
 
+    Page getUpNode(@Param("parentId") String parentId, @Param("currentSort") Long currentSort);
+
+    Page getDownNode(@Param("parentId") String parentId, @Param("currentSort") Long currentSort);
+
+    Integer purge(List<String> idList);
+
 }
