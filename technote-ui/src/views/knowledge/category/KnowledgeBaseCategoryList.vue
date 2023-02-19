@@ -60,17 +60,14 @@
 
     <el-dialog
         v-model="confirmDeleteDialogVisiable"
-        title="Tips"
-        width="30%"
-        
+        title="删除分类"
+        width="20%"
     >
-        <span>This is a message</span>
+        <span>确定删除该分类吗?</span>
         <template #footer>
         <span class="dialog-footer">
-            <el-button @click="confirmDeleteDialogVisiable = false">Cancel</el-button>
-            <el-button type="primary" @click="doDelete"
-            >Confirm</el-button
-            >
+            <el-button @click="confirmDeleteDialogVisiable = false">取消</el-button>
+            <el-button type="primary" @click="doDelete">确定</el-button>
         </span>
         </template>
     </el-dialog>
