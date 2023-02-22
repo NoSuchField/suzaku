@@ -23,19 +23,21 @@
       <el-radio-button v-for="item in categoryList" :key="item.id" :label="item.name" @click="categorySwitch(item.id)" />
     </el-radio-group>
   </el-row>
-  <div style="display: flex; flex-wrap: wrap; flex-grow: 1; justify-content: left">
+  <div class="card-box">
     <el-card :body-style="{ padding: '0px' }" v-for="(item, index) in knowledgeBaseList" :key="item.id">
       <div>
         <div class="image">
-          <img :src="item.coverImage" @click="enterKb(item.id)" />
+          <div style="text-align: center; margin-left: 20px;">
+            <img class="cover-image" :src="item.coverImage" @click="enterKb(item.id)" />
+          </div>
+          <div class="book-name" @click="enterKb(item.id)">
+            <div>{{ item.name }}</div>
+          </div>
           <div class="card-edit">
             <el-icon>
               <Edit @click="editPageMeta(item.id)" />
             </el-icon>
           </div>
-        </div>
-        <div class="book-name">
-          <span>{{ item.name }}</span>
         </div>
       </div>
     </el-card>
@@ -46,7 +48,7 @@
 <script lang="ts" setup>
 import api from '../../api'
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 const currentDate = ref(new Date())
 
 interface Kb {
@@ -123,43 +125,62 @@ const editPageMeta = (id) => {
 
 <style>
 .el-card {
-  margin-top: 30px;
-  margin-bottom: 10px;
-  margin-right: 30px;
-  border: 2px solid #35363A !important;
+  border: 1px solid #4C4D4F !important;
   border-radius: 6px !important;
   cursor: pointer;
 }
 
 .el-card:hover {
-  border: 2px solid #41B883 !important;
+  border: 1px solid #FFFFFF !important;
 }
 
 .image {
   display: flex;
-  border-bottom: 1px dashed #35363A;
 }
 
-.image>img {
-  width: 40px;
-  height: 40px;
-  padding: 20px 50px;
-  padding-left: 60px;
-  margin-left: 20px;
+.card-box {
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 30px;
+  justify-content: center;
+  justify-items: stretch;
+  margin-top: 30px;
+}
+
+.cover-image {
+  width: 36px;
+  height: 36px;
+  margin-top: 20px;
+  border: 1px solid #35363A;
+  background-color: #EBEBEB;
+  border-radius: 6px;
+  padding: 2px;
 }
 
 .card-edit {
   font-size: 20px;
   color: #35363A;
   margin: 10px;
+  flex-shrink: 1;
 }
 
 .card-edit:hover {
-  color: #41B883;
+  color: #FFFFFF;
 }
 
 .book-name {
-  margin: 8px 16px;
+  line-height: 40px;
+  flex-grow: 1;
+  margin-left: 20px;
+  border: 6px;
+}
+
+.book-name>div {
+  margin: 20px auto;
+  padding-left: 15px;
+  border-left: 1px solid #35363A;
+  font-weight: bold;
 }
 
 .el-row {
