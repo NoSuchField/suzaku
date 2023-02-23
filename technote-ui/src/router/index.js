@@ -29,7 +29,7 @@ const router = createRouter({
       name: 'KnowledgeBaseAdd',
       component: KnowledgeBaseAdd
     },
-    
+
     {
       path: '/knowledgeDetail',
       name: 'KnowledgeDetail',

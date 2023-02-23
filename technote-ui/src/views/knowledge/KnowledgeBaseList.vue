@@ -139,7 +139,6 @@ const editPageMeta = (id) => {
 }
 
 .card-box {
-  padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-gap: 30px;

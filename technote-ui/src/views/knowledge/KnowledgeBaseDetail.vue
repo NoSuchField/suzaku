@@ -1,21 +1,17 @@
 <template>
-
     <div class="common-layout" style="height: calc(100%)">
         <el-container>
             <el-aside width="480px">
-                <el-tree allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef" :data="data"
-                    draggable default-expand-all node-key="id" :expand-on-click-node=false
-                    @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter"
-                    :current-node-key="currentNodeId"
-                    @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd"
-                    @node-drop="handleDrop" @node-click="handleNodeClick">
+                <el-tree allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef" :data="data" draggable
+                    default-expand-all node-key="id" :expand-on-click-node=false @node-drag-start="handleDragStart"
+                    @node-drag-enter="handleDragEnter" :current-node-key="currentNodeId" @node-drag-leave="handleDragLeave"
+                    @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop"
+                    @node-click="handleNodeClick">
                     <template #default="{ node, data }">
                         <span class="custom-tree-node">
                             <span>{{ node.label }} </span>
                             <span>
-
-                                <a id="btnDel" >
-                                    
+                                <a id="btnDel">
                                     <el-icon @click="movePage('up', data.id)">
                                         <Top />
                                     </el-icon>
@@ -23,7 +19,7 @@
                                     <el-icon @click="movePage('down', data.id)">
                                         <Bottom />
                                     </el-icon>
-                                    <el-icon  @click="delPage.value = data;centerDialogVisible=true">
+                                    <el-icon @click="delPage.value = data; centerDialogVisible = true">
                                         <Delete />
                                     </el-icon>
                                 </a>
@@ -85,17 +81,17 @@
                         <Markdown :source="pageDetail.content || ''" />
                     </div>
 
-                    <el-tree v-if="showIndex" allow-drop="true" allow-drag="true" :highlight-current="true"
-                        ref="treeRef" :data="data" draggable default-expand-all node-key="id"
-                        :expand-on-click-node=false @node-drag-start="handleDragStart"
-                        @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave"
-                        @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop"
-                        @node-click="handleNodeClick">
+                    <el-tree v-if="showIndex" allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef"
+                        :data="data" draggable default-expand-all node-key="id" :expand-on-click-node=false
+                        @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter"
+                        @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd"
+                        @node-drop="handleDrop" @node-click="handleNodeClick">
                         <template #default="{ node, data }">
                             <span class="custom-tree-node">
                                 <span>{{ node.label }}</span>
                                 <span>
-                                    <a id="btnDel" style="margin-left: 8px" @click="delPage.value = data;centerDialogVisible=true">
+                                    <a id="btnDel" style="margin-left: 8px"
+                                        @click="delPage.value = data; centerDialogVisible = true">
                                         <el-icon>
                                             <Delete />
                                         </el-icon>
@@ -105,21 +101,16 @@
                         </template>
 
                     </el-tree>
-                    
-                    <el-dialog
-                        v-model="centerDialogVisible"
-                        title="Warning"
-                        width="30%"
-                        align-center
-                    >
+
+                    <el-dialog v-model="centerDialogVisible" title="Warning" width="30%" align-center>
                         <span>确定删除页面吗 ?</span>
                         <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="centerDialogVisible = false">Cancel</el-button>
-                            <el-button type="primary" @click="deletePage(delPage.value.id)">
-                            Confirm
-                            </el-button>
-                        </span>
+                            <span class="dialog-footer">
+                                <el-button @click="centerDialogVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="deletePage(delPage.value.id)">
+                                    Confirm
+                                </el-button>
+                            </span>
                         </template>
                     </el-dialog>
 
@@ -164,7 +155,7 @@ if (router.currentRoute.value.query.id) {
     query = router.currentRoute.value.query
     localStorage.setItem('query', JSON.stringify(router.currentRoute.value.query))
 } else {
-    router.push({'path': '/knowledgeDetail', 'replace': true, 'query': query});
+    router.push({ 'path': '/knowledgeDetail', 'replace': true, 'query': query });
 }
 
 
@@ -219,10 +210,6 @@ let currentNode = ref({ 'id': '0', 'label': 'root' })
 
 const pageClicked = (node) => {
     let nodeId = node.id
-    console.log(nodeId)
-    // router.currentRoute.value.query.id = nodeId
-    
-
     currentNode.value = node
 
     setCheckedNodes(node)
@@ -240,11 +227,8 @@ const pageClicked = (node) => {
 
         }
     })
-
     localStorage.setItem('path', JSON.stringify(pathList.value))
-
     refreshPage(nodeId)
-
 }
 
 
@@ -258,16 +242,16 @@ const addPage = () => {
         if (response.data.code === "200") {
             let query = JSON.parse(localStorage.getItem('query'))
             query.pageId = response.data.data
-    router.replace({'path': '/knowledgeDetail', 'replace': false, 'query': query});
-    localStorage.setItem('query', JSON.stringify(query))
+            router.replace({ 'path': '/knowledgeDetail', 'replace': false, 'query': query });
+            localStorage.setItem('query', JSON.stringify(query))
 
-    if (id != 0) {
-        let newPathList = JSON.parse(localStorage.getItem('path'))
-        newPathList.push({'id': response.data.data, 'label': newPageName.value})
-        localStorage.setItem('path', JSON.stringify(newPathList))
-    }
+            if (id != 0) {
+                let newPathList = JSON.parse(localStorage.getItem('path'))
+                newPathList.push({ 'id': response.data.data, 'label': newPageName.value })
+                localStorage.setItem('path', JSON.stringify(newPathList))
+            }
 
-    nextTick(() => {router.go(0)})
+            nextTick(() => { router.go(0) })
         }
     });
 }
@@ -296,9 +280,9 @@ const setCheckedNodes = (node) => {
     let id = node.id === "0" ? null : node.id
     if (treeRef.value!) {
         treeRef.value!.setCurrentKey(
-        id,
-        true
-    )
+            id,
+            true
+        )
     }
 }
 
@@ -308,25 +292,22 @@ const deletePage = (pageId) => {
             localStorage.removeItem('query')
             delPage.value = {}
             centerDialogVisible.value = false
-            
+
             pathList.value = [{ 'id': '0', 'label': 'root' }]
             localStorage.setItem('path', JSON.stringify(pathList.value))
 
-            localStorage.setItem('query', JSON.stringify({'id': id}))
-            
-            router.push({'path': '/knowledgeDetail', 'replace': true, 'query': {'id':id}});
+            localStorage.setItem('query', JSON.stringify({ 'id': id }))
+
+            router.push({ 'path': '/knowledgeDetail', 'replace': true, 'query': { 'id': id } });
 
             nextTick(() => {
-                
+
                 api.get('/book/detail?id=' + id).then(response => {
                     if (response.data.code === "200") {
                         kbMetaData.value = response.data.data
                         viewIndex(false)
                         showIndex.value = true
-                        
                         currentNodeId.value = 0
-
-                        
                     }
                 });
             })
@@ -352,15 +333,15 @@ const refreshPage = (nodeId) => {
     }
     const newUrl = nodeId == 0 ? bookUrl : `${bookUrl}&pageId=${nodeId}`
     // window.history.replaceState('', '', newUrl)
-    let query = {'id': id, 'pageId': nodeId}
+    let query = { 'id': id, 'pageId': nodeId }
     localStorage.setItem('query', JSON.stringify(query))
-    router.push({'path': '/knowledgeDetail', 'replace': true, 'query': query});
+    router.push({ 'path': '/knowledgeDetail', 'replace': true, 'query': query });
 
     let flag = false
     pathList.value = JSON.parse(localStorage.getItem('path'))
 
-console.log(treeRef.value)
-    
+    console.log(treeRef.value)
+
 }
 let editMode = ref(false)
 
@@ -438,11 +419,11 @@ const viewIndex = (draw) => {
             data.value = response.data.data
 
             if (treeRef.value!) {
-        treeRef.value!.setCurrentKey(
-        currentNodeId,
-        true
-    )
-    }
+                treeRef.value!.setCurrentKey(
+                    currentNodeId,
+                    true
+                )
+            }
         }
     });
 }
@@ -474,14 +455,11 @@ function confirmClick() {
 }
 
 if (query.pageId) {
-    console.log('boooooooooooooooooo', query.pageId)
     refreshPage(query.pageId)
 }
 
 
 const movePage = (direction, pageId) => {
-    console.log(direction)
-
     api.post('/page/move/' + direction + "?pageId=" + pageId).then(response => {
         if (response.data.code === "200") {
             router.go(0)
@@ -519,7 +497,6 @@ const movePage = (direction, pageId) => {
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
-
 }
 
 .custom-tree-node a:hover {
@@ -537,13 +514,13 @@ const movePage = (direction, pageId) => {
     width: auto
 }
 
-#btnDel > .el-icon {
+#btnDel>.el-icon {
     font-size: 16px;
 }
 
-#btnDel > .el-icon :hover {
+#btnDel>.el-icon :hover {
     color: #808080;
-    background-color: #333333; 
+    background-color: #333333;
     border-radius: 3px
 }
 
@@ -614,16 +591,19 @@ const movePage = (direction, pageId) => {
     padding-top: 0 !important;
 }
 
-.cm-editor, .cm-gutters {
+.cm-editor,
+.cm-gutters {
     background-color: #1E1E1E !important;
 }
+
 .cm-line {
     border-top: 2px solid transparent !important;
     border-bottom: 2px solid transparent !important;
     color: #D4D4D4;
 }
 
-.cm-activeLine, .cm-activeLineGutter {
+.cm-activeLine,
+.cm-activeLineGutter {
     background-color: #1E1E1E !important;
     border-top: 2px solid #282828 !important;
     border-bottom: 2px solid #282828 !important;
@@ -647,7 +627,40 @@ const movePage = (direction, pageId) => {
 }
 
 .markdown-body {
-    --color-canvas-default: #202124 !important;
+    color: #A8B7C5;
+    --color-canvas-default: #2B2B2B !important;
     border: 1px solid #404040 !important;
+}
+
+.markdown-body blockquote {
+    background-color: #3C3D3E;
+    padding: .8rem;
+    color: #A8B7C5;
+    border-left: 2px solid #476387;
+}
+
+.markdown-body code {
+    border-radius: 4px;
+    background-color: #3C3D3E;
+    padding: .2rem;
+}
+
+.markdown-body img {
+    max-height: 200px;
+    border: 1px solid #282828;
+}
+
+.markdown-body pre {
+    background-color: #3C3D3E;
+    padding: 0;
+    border-radius: 4px;
+}
+
+.markdown-body a {
+    color: #589DF6;
+}
+
+.markdown-body table tr:nth-child(2n) {
+    background-color: #323232;
 }
 </style>

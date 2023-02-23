@@ -19,39 +19,39 @@ api.defaults.headers.post['Content-Type'] = 'application/json';
 
 
 //封装下post
-api.post = function(url, data){
+api.post = function (url, data) {
 
-      let token = window.localStorage.getItem('token');
-      
-      return new Promise((resolve, reject) => {
-        axios({
-          method: 'post',
-          url:config.baseURL + url,
-          data,
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Authorization': token
-          },
-        }).then(response => {
-          if (response.status == 200) {
-            //根据实际情况进行更改
-            resolve(response)
-          } else {
-            reject(response)
-          }
-        })
-      })
+  let token = window.localStorage.getItem('token');
+
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: config.baseURL + url,
+      data,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': token
+      },
+    }).then(response => {
+      if (response.status == 200) {
+        //根据实际情况进行更改
+        resolve(response)
+      } else {
+        reject(response)
+      }
+    })
+  })
 
 }
 
-api.get = function(url){
+api.get = function (url) {
 
   let token = window.localStorage.getItem('token');
-  
+
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url:config.baseURL + url,
+      url: config.baseURL + url,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Authorization': token

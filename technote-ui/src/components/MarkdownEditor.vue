@@ -36,7 +36,7 @@ let myTheme = EditorView.theme({
     // 选中的状态
     "&.cm-focused .cm-selectionBackground, ::selection": {
         backgroundColor: "#0052D9",
-        color:'#252526'
+        color: '#252526'
     },
     // 左侧侧边栏的颜色
     ".cm-gutters": {

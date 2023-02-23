@@ -1,5 +1,4 @@
 <template>
-
     <el-row class="mb-4">
         <el-button type="primary" @click="newCategory">
             <el-icon>
@@ -58,17 +57,13 @@
         </template>
     </el-dialog>
 
-    <el-dialog
-        v-model="confirmDeleteDialogVisiable"
-        title="删除分类"
-        width="20%"
-    >
+    <el-dialog v-model="confirmDeleteDialogVisiable" title="删除分类" width="20%">
         <span>确定删除该分类吗?</span>
         <template #footer>
-        <span class="dialog-footer">
-            <el-button @click="confirmDeleteDialogVisiable = false">取消</el-button>
-            <el-button type="primary" @click="doDelete">确定</el-button>
-        </span>
+            <span class="dialog-footer">
+                <el-button @click="confirmDeleteDialogVisiable = false">取消</el-button>
+                <el-button type="primary" @click="doDelete">确定</el-button>
+            </span>
         </template>
     </el-dialog>
 </template>
@@ -99,7 +94,7 @@ const refresh = () => {
 }
 
 const fmtdate = (row, column, cellValue, index) => {
-    return moment.unix(cellValue/1000).format('YYYY-MM-DD HH:mm:ss')
+    return moment.unix(cellValue / 1000).format('YYYY-MM-DD HH:mm:ss')
 }
 
 const tokenData = {
@@ -169,7 +164,7 @@ const doDelete = () => {
             refresh()
         }
     });
-} 
+}
 
 let tableData = ref([])
 
