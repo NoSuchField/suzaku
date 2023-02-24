@@ -32,10 +32,8 @@
                 <div class="mt-4">
 
                     <el-input v-model="newPageName" placeholder="Please input" class="input-with-select">
-
                         <template #append>
                             <el-button :icon="Check" id="btnAddPage" type="success" @click="addPage" />
-
                         </template>
                     </el-input>
                 </div>
@@ -69,9 +67,6 @@
                 <el-main>
                     <div class="mt-4" v-if="editMode" style="margin-bottom: 20px">
                         <el-input v-model="pageDetail.label" placeholder="Please input" class="input-with-select">
-                            <template #append>
-                                <el-button :icon="Check" type="success" @click="savePage" />
-                            </template>
                         </el-input>
                     </div>
 
