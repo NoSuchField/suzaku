@@ -1,5 +1,8 @@
 package com.omgxy.technote.security.config;
 
+import com.google.gson.Gson;
+import com.omgxy.technote.system.ResultEnum;
+import com.omgxy.technote.system.entity.dto.Response;
 import com.omgxy.technote.system.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,7 +36,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             // 校验接口传进来的token信息
             boolean verified = JwtUtil.verifyToken(token);
             if (!verified) {
-                response.getWriter().write("签名验签失败 !");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write(new Gson().toJson(new Response<>(ResultEnum.UNAUTHORIZED)));
                 return false;
             }
             return true;

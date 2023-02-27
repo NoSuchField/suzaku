@@ -51,7 +51,7 @@ const router = useRouter()
 let id = router.currentRoute.value.query.id
 
 let category = router.currentRoute.value.query.category
-console.log(category)
+
 let form = ref({
   name: '',
   description: '',

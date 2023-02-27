@@ -2,7 +2,9 @@ package com.omgxy.technote.system;
 
 public enum ResultEnum {
 
-    OK("200", "OK");
+    OK("200", "OK"),
+    UNAUTHORIZED("401", "Unauthorized")
+    ;
 
     public final String code;
 

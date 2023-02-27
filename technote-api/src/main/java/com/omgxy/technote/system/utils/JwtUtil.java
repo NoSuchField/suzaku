@@ -55,7 +55,7 @@ public class JwtUtil {
             jwtVerifier.verify(token);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException("auth failed");
+            return false;
         }
         return true;
     }

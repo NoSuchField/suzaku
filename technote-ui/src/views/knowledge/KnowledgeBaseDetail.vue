@@ -334,9 +334,6 @@ const refreshPage = (nodeId) => {
 
     let flag = false
     pathList.value = JSON.parse(localStorage.getItem('path'))
-
-    console.log(treeRef.value)
-
 }
 let editMode = ref(false)
 
