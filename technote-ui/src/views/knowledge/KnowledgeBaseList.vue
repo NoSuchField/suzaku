@@ -1,48 +1,56 @@
 <template>
-  <el-row class="mb-4">
-    <el-button type="primary" @click="kbNew">
-      <el-icon>
-        <Plus />
-      </el-icon>
-      新建知识库
-    </el-button>
-    <router-link to='/knowledgeCategory'>
-      <el-button type="primary">
-        <el-icon>
-          <Collection />
-        </el-icon>
-        分类管理
-      </el-button>
-    </router-link>
-  </el-row>
-  <el-row></el-row>
+  <el-container>
+    <el-aside width="200px">
 
-  <el-row>
-    <el-radio-group v-model="category" size="large">
-      <el-radio-button label="全部" @click="categorySwitch(null)" />
-      <el-radio-button v-for="item in categoryList" :key="item.id" :label="item.name" @click="categorySwitch(item.id)" />
-    </el-radio-group>
-  </el-row>
-  <div class="card-box">
-    <el-card :body-style="{ padding: '0px' }" v-for="(item, index) in knowledgeBaseList" :key="item.id">
-      <div>
-        <div class="image">
-          <div style="text-align: center; margin-left: 20px;">
-            <img class="cover-image" :src="item.coverImage" @click="enterKb(item.id)" />
-          </div>
-          <div class="book-name" @click="enterKb(item.id)">
-            <div>{{ item.name }}</div>
-          </div>
-          <div class="card-edit">
+      <el-row class="mb-4" style="margin-left: 20px; margin-bottom: 20px;">
+        <el-button @click="kbNew">
+          <el-icon>
+            <Plus />
+          </el-icon>
+        </el-button>
+        <router-link to='/knowledgeCategory'>
+          <el-button>
             <el-icon>
-              <Edit @click="editPageMeta(item.id)" />
+              <Collection />
             </el-icon>
+          </el-button>
+        </router-link>
+      </el-row>
+
+      <el-menu default-active="2" class="" :collapse="false">
+        <el-menu-item @click="categorySwitch(null)">
+          <template #title>全部</template>
+        </el-menu-item>
+        <el-menu-item v-for="item, index in categoryList" :index="index" :key="item.id" :label="item.name"
+          @click="categorySwitch(item.id)">
+          <template #title>{{ item.name }}</template>
+        </el-menu-item>
+      </el-menu>
+
+    </el-aside>
+    <el-main>
+      <div class="card-box">
+        <el-card :body-style="{ padding: '0px' }" v-for="(item, index) in knowledgeBaseList" :key="item.id">
+          <div>
+            <div class="image">
+              <div style="text-align: center; margin-left: 20px;">
+                <img class="cover-image" :src="item.coverImage" @click="enterKb(item.id)" />
+              </div>
+              <div class="book-name" @click="enterKb(item.id)">
+                <div>{{ item.name }}</div>
+              </div>
+              <div class="card-edit">
+                <el-icon>
+                  <Edit @click="editPageMeta(item.id)" />
+                </el-icon>
+              </div>
+            </div>
           </div>
-        </div>
+        </el-card>
       </div>
-    </el-card>
-  </div>
-  <el-empty style="margin-top: 200px" description="暂无数据" v-if="knowledgeBaseList.length == 0" />
+      <el-empty style="margin-top: 200px" description="暂无数据" v-if="knowledgeBaseList.length == 0" />
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts" setup>
@@ -123,7 +131,7 @@ const editPageMeta = (id) => {
 
 </script>
 
-<style>
+<style scoped>
 .el-card {
   border: 1px solid #4C4D4F !important;
   border-radius: 6px !important;
@@ -140,11 +148,12 @@ const editPageMeta = (id) => {
 
 .card-box {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   grid-gap: 30px;
   justify-content: center;
   justify-items: stretch;
   margin-top: 30px;
+  white-space: nowrap;
 }
 
 .cover-image {
@@ -184,5 +193,14 @@ const editPageMeta = (id) => {
 
 .el-row {
   margin-top: 1rem;
+}
+
+.el-menu-item {
+  height: 40px !important;
+}
+
+.el-aside {
+  margin: 0 !important;
+  margin-top: 30px !important;
 }
 </style>
