@@ -1,7 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-
+    <el-aside>
       <el-row class="mb-4" style="margin-left: 20px; margin-bottom: 20px;">
         <el-button @click="kbNew">
           <el-icon>
@@ -26,9 +25,8 @@
           <template #title>{{ item.name }}</template>
         </el-menu-item>
       </el-menu>
-
     </el-aside>
-    <el-main>
+    <el-main style="padding: 0;">
       <div class="card-box">
         <el-card :body-style="{ padding: '0px' }" v-for="(item, index) in knowledgeBaseList" :key="item.id">
           <div>
@@ -57,7 +55,6 @@
 import api from '../../api'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-const currentDate = ref(new Date())
 
 interface Kb {
   id: string,
@@ -75,8 +72,6 @@ interface Category {
 const router = useRouter()
 
 let categoryList = ref<Category[]>([])
-
-const category = ref('全部')
 let categoryId = ref('0')
 
 let knowledgeBaseList = ref<Kb[]>([])
@@ -202,5 +197,58 @@ const editPageMeta = (id) => {
 .el-aside {
   margin: 0 !important;
   margin-top: 30px !important;
+}
+
+@media (max-width: 500px) {
+  .el-aside {
+    width: 40% !important;
+    margin: 0 !important;
+    position: fixed;
+    left: 0;
+    height: 100%;
+    z-index: 999;
+  }
+
+  .card-box {
+    margin-left: calc(40% + 8px);
+    margin-right: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-gap: 10px;
+    justify-content: center;
+    justify-items: stretch;
+    margin-top: 10px;
+    white-space: nowrap;
+    margin-right: 10px;
+
+  }
+
+  .image {
+    height: 50px;
+    margin-top: 0;
+  }
+
+  .cover-image {
+    width: 24px;
+    height: 24px;
+    margin-top: 10px;
+  }
+
+  .book-name {
+    margin-left: 0;
+    line-height: 20px;
+    height: 20px;
+  }
+
+  .book-name>div {
+    border-left: 1px solid #1d1e1f;
+    line-height: 20px;
+    height: 20px;
+  }
+
+  .card-edit {
+    display: none;
+  }
+
 }
 </style>
