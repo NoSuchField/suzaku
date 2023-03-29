@@ -1,7 +1,7 @@
 <template>
     <div class="common-layout" style="height: calc(100%)">
         <el-container>
-            <el-aside width="480px">
+            <el-aside>
                 <el-tree allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef" :data="data" draggable
                     default-expand-all node-key="id" :expand-on-click-node=false @node-drag-start="handleDragStart"
                     @node-drag-enter="handleDragEnter" :current-node-key="currentNodeId" @node-drag-leave="handleDragLeave"
@@ -29,7 +29,7 @@
 
                 </el-tree>
 
-                <div class="mt-4">
+                <div class="mt-4 input-add-page">
 
                     <el-input v-model="newPageName" placeholder="Please input" class="input-with-select">
                         <template #append>
@@ -57,7 +57,7 @@
                     </el-row>
 
 
-                    <el-breadcrumb :separator-icon="ArrowRight">
+                    <el-breadcrumb :separator-icon="ArrowRight" class="index-crumb-bar">
                         <el-breadcrumb-item v-for="item in pathList" @click="pageClicked(item)"
                             :class="item.id == currentNodeId ? 'currentBread' : ''">{{ item.label }}
                         </el-breadcrumb-item>
@@ -461,7 +461,7 @@ const movePage = (direction, pageId) => {
 
 </script>
 
-<style>
+<style scoped>
 .el-drawer__body {
     padding: 20px !important;
 }
@@ -581,6 +581,8 @@ const movePage = (direction, pageId) => {
 .el-main {
     flex-basis: 0 !important;
     padding-top: 0 !important;
+    margin: 20px;
+    margin-top: 0;
 }
 
 .cm-editor,
@@ -606,6 +608,7 @@ const movePage = (direction, pageId) => {
 }
 
 .el-aside {
+    width: 480px;
     padding: 10px;
     margin-right: 0;
 }
@@ -654,5 +657,36 @@ const movePage = (direction, pageId) => {
 
 .markdown-body table tr:nth-child(2n) {
     background-color: #323232;
+}
+
+@media (max-width: 500px) {
+
+    .input-add-page, .index-crumb-bar {
+        display: none;
+    }
+    
+    .navBar {
+        height: auto !important;
+        margin: 10px 0;
+        padding: 0;
+        background-color: #252526;
+    }
+    
+    .el-container {
+        display: block;
+    }
+    .el-aside {
+        width: auto;
+        padding: 0;
+        height: auto;
+    }
+
+    .el-main {
+        margin: 0;
+    }
+
+    .markdown-body {
+        border-radius: 0;
+    }
 }
 </style>

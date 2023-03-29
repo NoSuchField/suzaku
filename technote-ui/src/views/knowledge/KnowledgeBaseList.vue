@@ -149,6 +149,7 @@ const editPageMeta = (id) => {
   justify-items: stretch;
   margin-top: 30px;
   white-space: nowrap;
+  padding: 0 30px;
 }
 
 .cover-image {
@@ -196,13 +197,13 @@ const editPageMeta = (id) => {
 
 .el-aside {
   margin: 0 !important;
-  margin-top: 30px !important;
 }
 
 @media (max-width: 500px) {
   .el-aside {
     width: 40% !important;
     margin: 0 !important;
+    padding: 0 !important;
     position: fixed;
     left: 0;
     height: 100%;
@@ -220,7 +221,7 @@ const editPageMeta = (id) => {
     margin-top: 10px;
     white-space: nowrap;
     margin-right: 10px;
-
+    padding: 0;
   }
 
   .image {
