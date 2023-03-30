@@ -1,8 +1,8 @@
 <template>
     <div class="common-layout" style="height: calc(100%)">
-        <el-container>
+        <el-container >
             <el-aside>
-                <el-tree allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef" :data="data" draggable
+                <el-tree v-if="!isFold" allow-drop="true" allow-drag="true" :highlight-current="true" ref="treeRef" :data="data" draggable
                     default-expand-all node-key="id" :expand-on-click-node=false @node-drag-start="handleDragStart"
                     @node-drag-enter="handleDragEnter" :current-node-key="currentNodeId" @node-drag-leave="handleDragLeave"
                     @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop"
@@ -53,6 +53,10 @@
 
                         <el-button style="margin-left: 16px" @click="toggleMode" v-if="currentNodeId != 0">
                             {{ editMode == true ? "预览" : "编辑" }}
+                        </el-button>
+
+                        <el-button style="margin-left: 16px" @click="toggleFold" v-if="ismobile">
+                            {{ isFold == true ? "展开" : "折叠" }}
                         </el-button>
                     </el-row>
 
@@ -139,6 +143,8 @@ import MarkdownEditor from '../../components/MarkdownEditor.vue'
 const router = useRouter()
 
 let query = {}
+
+let ismobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
 if (localStorage.getItem('query')) {
     query = JSON.parse(localStorage.getItem('query'))
@@ -339,7 +345,6 @@ let editMode = ref(false)
 
 const toggleMode = () => {
     editMode.value = !editMode.value
-
 }
 
 const handleDragStart = (node: Node, ev: DragEvents) => {
@@ -383,6 +388,7 @@ const handleNodeClick = (
     currentNode.value = { 'id': node.id, 'label': node.label }
     pathList.value = [{ id: '0', label: 'root' }].concat(node.path)
     localStorage.setItem('path', JSON.stringify(pathList.value))
+    if (ismobile) { isFold.value = !isFold.value }
 }
 
 const allowDrop = (draggingNode: Node, dropNode: Node, type: NodeDropType) => {
@@ -457,6 +463,12 @@ const movePage = (direction, pageId) => {
             router.go(0)
         }
     });
+}
+
+let isFold = ref(false)
+
+const toggleFold = () => {
+    isFold.value = !isFold.value
 }
 
 </script>
@@ -572,10 +584,11 @@ const movePage = (direction, pageId) => {
     background-color: #292A2D;
     padding: 20px;
     z-index: 999;
-    margin: 20px;
-    margin-top: 30px;
     border-radius: 5px;
     padding-bottom: 0 !important;
+    top: 0;
+    width: calc(100% - 40px);
+    margin: 20px;
 }
 
 .el-main {
@@ -611,6 +624,7 @@ const movePage = (direction, pageId) => {
     width: 480px;
     padding: 10px;
     margin-right: 0;
+    margin-top: 20px;
 }
 
 .cm-gutterElement {
@@ -624,6 +638,7 @@ const movePage = (direction, pageId) => {
 .markdown-body {
     color: #A8B7C5;
     --color-canvas-default: #2B2B2B !important;
+    --color-canvas-subtle: #3C3D3E !important;
     border: 1px solid #404040 !important;
 }
 
@@ -634,10 +649,22 @@ const movePage = (direction, pageId) => {
     border-left: 2px solid #476387;
 }
 
+.markdown-body pre>code {
+    background-color: #3C3D3E;
+}
+
+.markdown-body pre code {
+    background-color: #3C3D3E;
+}
+
 .markdown-body code {
     border-radius: 4px;
-    background-color: #3C3D3E;
+    background-color: #3C3D3E !important;
     padding: .2rem;
+}
+
+.markdown-body pre>code {
+    background-color: #3C3D3E !important;
 }
 
 .markdown-body img {
@@ -666,10 +693,13 @@ const movePage = (direction, pageId) => {
     }
     
     .navBar {
+        position: absolute;
         height: auto !important;
-        margin: 10px 0;
-        padding: 0;
+        margin: 0;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
         background-color: #252526;
+        width: 100%;
     }
     
     .el-container {
@@ -679,6 +709,9 @@ const movePage = (direction, pageId) => {
         width: auto;
         padding: 0;
         height: auto;
+        position: fixed;
+        width: 100%;
+        margin-top: 50px;
     }
 
     .el-main {
@@ -686,7 +719,9 @@ const movePage = (direction, pageId) => {
     }
 
     .markdown-body {
+        margin-top: 50px;
         border-radius: 0;
+        border: none !important;
     }
 }
 </style>

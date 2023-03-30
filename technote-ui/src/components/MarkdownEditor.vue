@@ -53,7 +53,7 @@ const props = withDefaults(defineProps<IProps>(), {
     height: '400px'
 })
 const code = ref(``);
-const extensions = [markdown(), myTheme];
+const extensions = [markdown(), oneDark];
 const Change = () => {
 
 }
